@@ -25,6 +25,7 @@ defmodule BidPlatformWeb.Router do
     get "/", PageController, :home
     live "/register", RegistrationLive, :new
     live "/login", AuthLive.Login, :new
+    delete "/logout", AuthController, :delete
     live "/auctions", AuctionLive.Index, :index
     live "/auctions/:id", AuctionLive.Show, :show
     live "/my-bids", BidderLive.Dashboard, :index

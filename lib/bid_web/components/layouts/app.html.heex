@@ -54,13 +54,14 @@
           </label>
           <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-white/10 glass">
             <li><a href={~p"/admin"}>Dashboard</a></li>
-            <li><a href={~p"/auth/logout"}>Logout</a></li>
+            <li><.link href={~p"/logout"} method="delete">Logout</.link></li>
           </ul>
         </div>
       <% else %>
-        <a href={~p"/auth/login"} class="text-sm font-semibold leading-6 text-white hover:text-primary transition-colors">
-          Log in <span aria-hidden="true">&rarr;</span>
-        </a>
+        <div class="flex items-center gap-4">
+          <.link navigate={~p"/login"} class="text-xs font-bold text-white/50 hover:text-white uppercase tracking-widest transition-colors">Log in</.link>
+          <.link navigate={~p"/register"} class="btn btn-sm btn-primary rounded-xl">Get Started</.link>
+        </div>
       <% end %>
     </div>
   </div>
