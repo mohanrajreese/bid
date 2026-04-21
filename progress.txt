@@ -85,3 +85,9 @@ Description: Added a public /api/health endpoint that verifies database connecti
 Task: Add basic documentation
 Status: Completed
 Description: Created API_DOCUMENTATION.md covering authentication, auction/bid REST endpoints, and real-time WebSocket events.
+----------
+Task: Verify multi-tenant isolation
+Status: Completed
+Description: Performed a comprehensive audit of the codebase to ensure tenant isolation. Enabled PostgreSQL Row-Level Security (RLS) on all tenant-scoped tables as a final defense layer. Verified that all application queries, background jobs, and WebSocket channels respect the tenant boundary.
+----------
+ralph-done-anq4l
