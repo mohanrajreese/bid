@@ -53,3 +53,7 @@ Description: Implemented AuctionController and AuctionJSON for RESTful API acces
 Task: Implement bidding logic
 Status: Completed
 Description: Created ConcurrentBidHandler for concurrency-safe bidding using PostgreSQL locks. Augmented Bidding context with place_bid/4. Implemented BidController and BidJSON with nested routing under auctions.
+----------
+Task: Add validation rules
+Status: Completed
+Description: Created InputSanitizer utility and Tenants.Policy for enforcing tenant-level business rules. Integrated auction creation limit checks based on tenant plans into the API layer.

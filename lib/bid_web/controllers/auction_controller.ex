@@ -29,16 +29,23 @@ defmodule BidPlatformWeb.AuctionController do
   def create(conn, %{"auction" => auction_params}) do
     tenant_id = conn.assigns.tenant_id
     user_id = conn.assigns.current_user.id
+    tenant = BidPlatform.Tenants.get_tenant!(tenant_id)
 
-    auction_params =
-      auction_params
-      |> Map.put("tenant_id", tenant_id)
-      |> Map.put("created_by", user_id)
+    if BidPlatform.Tenants.Policy.can_create_auction?(tenant) do
+      auction_params =
+        auction_params
+        |> Map.put("tenant_id", tenant_id)
+        |> Map.put("created_by", user_id)
 
-    with {:ok, %Auction{} = auction} <- Auctions.create_auction(auction_params) do
+      with {:ok, %Auction{} = auction} <- Auctions.create_auction(auction_params) do
+        conn
+        |> put_status(:created)
+        |> render(:show, auction: auction)
+      end
+    else
       conn
-      |> put_status(:created)
-      |> render(:show, auction: auction)
+      |> put_status(:forbidden)
+      |> json(%{error: "plan_limit_exceeded", message: "You have reached your monthly auction limit."})
     end
   end
 
