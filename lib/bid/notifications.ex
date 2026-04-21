@@ -1,4 +1,9 @@
 defmodule BidPlatform.Notifications do
+  @moduledoc """
+  Handles dispatch and persistence of system notifications.
+
+  Integrates with Swoosh for emails and Phoenix.PubSub for real-time in-app alerts.
+  """
   import Ecto.Query, warn: false
   alias BidPlatform.Repo
   alias BidPlatform.Notifications.Notification

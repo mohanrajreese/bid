@@ -1,6 +1,9 @@
 defmodule BidPlatform.Tenants do
   @moduledoc """
-  The Tenants context.
+  The Tenants context manages the lifecycle of multi-tenant organizations.
+
+  This includes listing tenants, fetching settings, and handling the
+  `Registration` flow for new participants.
   """
 
   import Ecto.Query, warn: false

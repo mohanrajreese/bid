@@ -1,6 +1,17 @@
 defmodule BidPlatform.Bidding.ConcurrentBidHandler do
   @moduledoc """
   Handles concurrency-safe bid placement using PostgreSQL row-level locks.
+
+  This module ensures that only one bid can be processed for a specific auction
+  at a time by acquiring an exclusive row lock (`SELECT FOR UPDATE`).
+
+  ## High-Level Flow
+  1. Acquire lock on Auction row.
+  2. Validate bid (check status, amount, and business rules).
+  3. Insert bid record and update auction current price.
+  4. Handle Anti-sniping extensions.
+  5. Trigger Proxy Bids recursively.
+  6. Broadcast updates via Phoenix Channels.
   """
 
   alias BidPlatform.Repo

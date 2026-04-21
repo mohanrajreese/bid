@@ -1,6 +1,8 @@
 defmodule BidPlatform.AuditLogs do
   @moduledoc """
-  The AuditLogs context.
+  The AuditLogs context records all sensitive mutations for compliance and security auditing.
+
+  Logs include metadata such as IP address and user agents to track the origin of actions.
   """
 
   import Ecto.Query, warn: false

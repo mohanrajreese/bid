@@ -1,6 +1,9 @@
 defmodule BidPlatform.Accounts do
   @moduledoc """
-  The Accounts context.
+  The Accounts context handles user identity, authentication, and administrative management.
+
+  This includes bidder registration, user deactivation, role management,
+  and the invitation system for onboarding external participants.
   """
 
   import Ecto.Query, warn: false
