@@ -13,3 +13,7 @@ PENDING TASKS:
 
 BLOCKERS:
 - None
+----------
+Task: Setup Docker environment
+Status: Completed
+Description: Created Dockerfile, docker-compose.yml, and .dockerignore. Updated config/dev.exs to support DATABASE_URL.

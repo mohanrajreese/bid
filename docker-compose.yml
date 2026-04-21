@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: bid_dev
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    command: sh -c "mix ecto.setup && mix phx.server"
+    volumes:
+      - .:/app
+    ports:
+      - "4000:4000"
+    environment:
+      - DATABASE_URL=ecto://postgres:postgres@db/bid_dev
+      - SECRET_KEY_BASE=UnIzNfZ6HL1hAd1EY3s/SfqseHPwu6BOKoKhFeX7kNx1Bm/rONdMLUgMcAjjsxAq
+      - PHX_SERVER=true
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

@@ -1,14 +1,22 @@
 import Config
 
 # Configure your database
-config :bid, BidPlatform.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "bid_dev",
-  stacktrace: true,
-  show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+if System.get_env("DATABASE_URL") do
+  config :bid, BidPlatform.Repo,
+    url: System.get_env("DATABASE_URL"),
+    stacktrace: true,
+    show_sensitive_data_on_connection_error: true,
+    pool_size: 10
+else
+  config :bid, BidPlatform.Repo,
+    username: "postgres",
+    password: System.get_env("DATABASE_PASSWORD") || "postgres",
+    hostname: System.get_env("DATABASE_HOST") || "localhost",
+    database: "bid_dev",
+    stacktrace: true,
+    show_sensitive_data_on_connection_error: true,
+    pool_size: 10
+end
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
