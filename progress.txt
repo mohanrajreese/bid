@@ -69,3 +69,7 @@ Description: Implemented AuctionChannel with topic-level tenant isolation. Subsc
 Task: Broadcast bids in real-time
 Status: Completed
 Description: Integrated Phoenix PubSub broadcasting into the concurrent bid placement flow. Successfully validated bids now trigger a 'bid:new' event on the tenant-isolated auction topic, ensuring all connected clients receive real-time updates.
+----------
+Task: Setup Oban
+Status: Completed
+Description: Added Oban dependency, created database migration for background jobs, and configured Oban in config.exs. Added Oban to the main application supervision tree with defined queues for auctions and notifications.

@@ -15,7 +15,8 @@ defmodule BidPlatform.Application do
       # Start a worker by calling: BidPlatform.Worker.start_link(arg)
       # {BidPlatform.Worker, arg},
       # Start to serve requests, typically the last entry
-      BidPlatformWeb.Endpoint
+      BidPlatformWeb.Endpoint,
+      {Oban, Application.fetch_env!(:bid, Oban)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

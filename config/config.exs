@@ -66,6 +66,12 @@ config :bid, BidPlatform.Guardian,
   issuer: "bid_platform",
   secret_key: "wIMkehv2tLN8IevSTJCPuc7hbFpF/e8wvV64fOVJli/Px8+ZGt2tEakjKuy7qPEbUKbgMYZ/T0iuvQCHawMnbg=="
 
+# Oban configuration
+config :bid, Oban,
+  repo: BidPlatform.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 10, auctions: 50, notifications: 20]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
