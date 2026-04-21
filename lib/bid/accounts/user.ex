@@ -31,6 +31,16 @@ defmodule BidPlatform.Accounts.User do
     |> put_password_hash()
   end
 
+  def registration_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :password, :name])
+    |> validate_required([:email, :password, :name])
+    |> validate_length(:password, min: 8)
+    |> validate_format(:email, ~r/^[\w.!#$%&'*+\/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+$/)
+    |> unique_constraint([:email, :tenant_id])
+    |> put_password_hash()
+  end
+
   defp put_password_hash(%Ecto.Changeset{valid?: true, changes: %{password: pw}} = changeset) do
     put_change(changeset, :password_hash, Bcrypt.hash_pwd_salt(pw))
   end

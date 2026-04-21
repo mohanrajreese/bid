@@ -65,6 +65,16 @@ defmodule BidPlatform.Accounts do
   end
 
   @doc """
+  Gets a single user by email across all tenants.
+  Only for landing page/sign-in discovery.
+  """
+  def get_user_by_email(email) do
+    User
+    |> where([u], u.email == ^email)
+    |> Repo.one()
+  end
+
+  @doc """
   Creates a user.
   """
   def create_user(attrs \\ %{}) do

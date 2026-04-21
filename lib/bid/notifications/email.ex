@@ -1,5 +1,5 @@
 defmodule BidPlatform.Notifications.Email do
-  use Swoosh.Email, view_module: BidPlatformWeb.EmailView, layout: {BidPlatformWeb.Layouts, :email}
+  import Swoosh.Email
 
   def outbid_notification(user, auction, new_price) do
     new()

@@ -4,7 +4,7 @@ defmodule BidPlatformWeb.UserSocket do
   alias BidPlatform.Guardian
 
   # Channels
-  channel "tenant:*:auction:*", BidPlatformWeb.AuctionChannel
+  channel "tenant:*", BidPlatformWeb.AuctionChannel
 
   @impl true
   def connect(%{"token" => token}, socket, _connect_info) do

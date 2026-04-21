@@ -51,7 +51,7 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
         </.link>
       </div>
 
-      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={push_patch(socket, to: ~p"/admin")}>
+      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={JS.patch(~p"/admin")}>
         <.live_component
           module={BidPlatformWeb.AdminLive.AuctionForm}
           id={@auction.id || :new}

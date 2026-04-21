@@ -11,7 +11,7 @@ defmodule BidPlatform.Repo.Migrations.CreateAuditLogs do
       add :resource_id, :binary_id
       add :changes, :map
       add :ip_address, :string
-      add :user_agent: :string
+      add :user_agent, :string
 
       timestamps(type: :utc_datetime, updated_at: false)
     end

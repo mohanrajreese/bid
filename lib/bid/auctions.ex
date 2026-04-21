@@ -1,3 +1,4 @@
+defmodule BidPlatform.Auctions do
   @moduledoc """
   The Auctions context provides functionality for managing auction lifecycles,
   including creation, status updates, and anti-sniping extensions.

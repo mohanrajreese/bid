@@ -9,7 +9,6 @@ defmodule BidPlatformWeb.Layouts do
   # The default root.html.heex file contains the HTML
   # skeleton of your application, namely HTML headers
   # and other static content.
-  embed_templates "layouts/*"
 
   @doc """
   Renders your app layout.
