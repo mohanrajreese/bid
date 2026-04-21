@@ -21,3 +21,7 @@ Description: Created Dockerfile, docker-compose.yml, and .dockerignore. Updated 
 Task: Configure PostgreSQL connection
 Status: Completed
 Description: Verified PostgreSQL configuration in dev.exs and test.exs. Created TenantPreparer for Row-Level Security support.
+----------
+Task: Create Tenant schema
+Status: Completed
+Description: Created tenants table migration, Tenant schema, and Tenants context.
