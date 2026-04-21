@@ -14,6 +14,11 @@ defmodule BidPlatformWeb.Router do
     plug :accepts, ["json"]
   end
 
+  scope "/api", BidPlatformWeb do
+    pipe_through :api
+    get "/health", HealthController, :check
+  end
+
   scope "/", BidPlatformWeb do
     pipe_through :browser
 

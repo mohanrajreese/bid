@@ -77,3 +77,7 @@ Description: Added Oban dependency, created database migration for background jo
 Task: Implement auction closing worker
 Status: Completed
 Description: Implemented AuctionClosingWorker for final winner determination and status updates. Created AuctionGhostSweepWorker as a cron job to handle edge cases where scheduled jobs might be missed. Integrated job scheduling into the auction creation flow.
+----------
+Task: Implement health check API
+Status: Completed
+Description: Added a public /api/health endpoint that verifies database connectivity and returns the current system status in JSON format.
