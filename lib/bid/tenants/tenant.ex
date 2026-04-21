@@ -13,8 +13,9 @@ defmodule BidPlatform.Tenants.Tenant do
     field :is_active, :boolean, default: true
     field :settings, :map, default: %{}
 
+    has_many :users, BidPlatform.Accounts.User
+
     # Associations can be added here as other schemas are created
-    # has_many :users, BidPlatform.Accounts.User
     # has_many :auctions, BidPlatform.Auctions.Auction
 
     timestamps()

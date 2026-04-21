@@ -25,3 +25,7 @@ Description: Verified PostgreSQL configuration in dev.exs and test.exs. Created 
 Task: Create Tenant schema
 Status: Completed
 Description: Created tenants table migration, Tenant schema, and Tenants context.
+----------
+Task: Create User schema
+Status: Completed
+Description: Created users table migration, User schema, and Accounts context. Added bcrypt_elixir and guardian dependencies.
