@@ -24,9 +24,13 @@ defmodule BidPlatformWeb.Router do
 
     get "/", PageController, :home
     live "/register", RegistrationLive, :new
+    live "/login", AuthLive.Login, :new
     live "/auctions", AuctionLive.Index, :index
     live "/auctions/:id", AuctionLive.Show, :show
+    live "/my-bids", BidderLive.Dashboard, :index
     live "/admin", AdminLive.Dashboard, :index
+    live "/admin/new", AdminLive.Dashboard, :new
+    live "/admin/:id/edit", AdminLive.Dashboard, :edit
   end
 
   # Other scopes may use custom stacks.

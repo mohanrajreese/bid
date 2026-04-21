@@ -17,15 +17,51 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
   end
 
   @impl true
+  def handle_params(params, _url, socket) do
+    {:noreply, apply_action(socket, socket.assigns.live_action, params)}
+  end
+
+  defp apply_action(socket, :new, _params) do
+    socket
+    |> assign(:page_title, "New Auction")
+    |> assign(:auction, %BidPlatform.Auctions.Auction{})
+  end
+
+  defp apply_action(socket, :index, _params) do
+    socket
+    |> assign(:page_title, "Admin Dashboard")
+    |> assign(:auction, nil)
+  end
+
+  @impl true
+  def handle_info({BidPlatformWeb.AdminLive.AuctionForm, {:saved, _auction}}, socket) do
+    tenant = socket.assigns.tenant
+    auctions = if tenant, do: BidPlatform.Auctions.list_auctions(tenant.id), else: []
+    {:noreply, assign(socket, auctions: auctions)}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <div class="space-y-8">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-black text-white text-glow">Admin Command Center</h1>
-        <button class="btn-premium" phx-click="new_auction">
+        <.link patch={~p"/admin/new"} class="btn-premium">
           + Create New Auction
-        </button>
+        </.link>
       </div>
+
+      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={push_patch(socket, to: ~p"/admin")}>
+        <.live_component
+          module={BidPlatformWeb.AdminLive.AuctionForm}
+          id={@auction.id || :new}
+          title={@page_title}
+          action={@live_action}
+          auction={@auction}
+          tenant_id={@tenant.id}
+          patch={~p"/admin"}
+        />
+      </.modal>
 
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
