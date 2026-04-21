@@ -41,3 +41,7 @@ Description: Created bids table migration, Bid schema, and Bidding context. Upda
 Task: Implement JWT authentication
 Status: Completed
 Description: Configured Guardian, created BidPlatform.Guardian module, added authentication logic to Accounts context, and implemented Auth plug for JWT verification.
+----------
+Task: Add role-based access control
+Status: Completed
+Description: Created Authorize plug for RBAC and TenantScope utility for enforcing tenant isolation in Ecto queries.
