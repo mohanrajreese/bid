@@ -57,3 +57,7 @@ Description: Created ConcurrentBidHandler for concurrency-safe bidding using Pos
 Task: Add validation rules
 Status: Completed
 Description: Created InputSanitizer utility and Tenants.Policy for enforcing tenant-level business rules. Integrated auction creation limit checks based on tenant plans into the API layer.
+----------
+Task: Setup Phoenix Channels
+Status: Completed
+Description: Created UserSocket with JWT authentication (Guardian integration) and registered it in the Endpoint. Verified tenant isolation at the socket connection level.
