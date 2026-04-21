@@ -61,3 +61,7 @@ Description: Created InputSanitizer utility and Tenants.Policy for enforcing ten
 Task: Setup Phoenix Channels
 Status: Completed
 Description: Created UserSocket with JWT authentication (Guardian integration) and registered it in the Endpoint. Verified tenant isolation at the socket connection level.
+----------
+Task: Implement auction subscriptions
+Status: Completed
+Description: Implemented AuctionChannel with topic-level tenant isolation. Subscribers only receive updates for auctions within their own tenant by validating topic parameters against socket assigns. Initial auction state is synced upon successful join.
