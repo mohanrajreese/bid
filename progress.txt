@@ -37,3 +37,7 @@ Description: Created auctions table migration, Auction schema, and Auctions cont
 Task: Create Bid schema
 Status: Completed
 Description: Created bids table migration, Bid schema, and Bidding context. Updated Auction and User schemas with associations.
+----------
+Task: Implement JWT authentication
+Status: Completed
+Description: Configured Guardian, created BidPlatform.Guardian module, added authentication logic to Accounts context, and implemented Auth plug for JWT verification.

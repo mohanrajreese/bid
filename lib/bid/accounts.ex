@@ -17,6 +17,12 @@ defmodule BidPlatform.Accounts do
   end
 
   @doc """
+  Gets a single user by ID only. Use with caution as it bypasses tenant isolation.
+  Only for internal authentication purposes.
+  """
+  def get_user!(id), do: Repo.get!(User, id)
+
+  @doc """
   Gets a single user within a tenant.
   """
   def get_user(tenant_id, id) do
@@ -58,6 +64,26 @@ defmodule BidPlatform.Accounts do
   """
   def delete_user(%User{} = user) do
     Repo.delete(user)
+  end
+
+  @doc """
+  Authenticates a user by email and password within a tenant.
+  """
+  def authenticate_user(tenant_id, email, password) do
+    user = get_user_by_email(tenant_id, email)
+
+    cond do
+      user && user.is_active && Bcrypt.verify_pass(password, user.password_hash) ->
+        {:ok, user}
+
+      user ->
+        {:error, :unauthorized}
+
+      true ->
+        # Prevent timing attacks
+        Bcrypt.no_user_verify()
+        {:error, :not_found}
+    end
   end
 
   @doc """
