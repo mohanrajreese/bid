@@ -1,0 +1,41 @@
+<header class="px-4 sm:px-6 lg:px-8 bg-mesh border-b border-white/10">
+  <div class="flex items-center justify-between py-3">
+    <div class="flex items-center gap-4">
+      <a href="/" class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <span class="text-white font-bold">B</span>
+        </div>
+        <span class="text-xl font-bold tracking-tight text-white">BidPlatform</span>
+      </a>
+    </div>
+    <div class="flex items-center gap-4">
+      <%= if @current_user do %>
+        <span class="text-sm text-white/70">
+          {@current_user.email}
+        </span>
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 rounded-full bg-white/10 flex items-center justify-center">
+              <.icon name="hero-user" class="w-5 h-5 text-white" />
+            </div>
+          </label>
+          <ul tabindex="0" class="mt-3 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52 border border-white/10 glass">
+            <li><a href={~p"/admin"}>Dashboard</a></li>
+            <li><a href={~p"/auth/logout"}>Logout</a></li>
+          </ul>
+        </div>
+      <% else %>
+        <a href={~p"/auth/login"} class="text-sm font-semibold leading-6 text-white hover:text-primary transition-colors">
+          Log in <span aria-hidden="true">&rarr;</span>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</header>
+
+<main class="px-4 py-10 sm:px-6 lg:px-8 min-h-screen bg-mesh">
+  <div class="mx-auto max-w-7xl">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>

@@ -23,6 +23,10 @@ defmodule BidPlatformWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/register", RegistrationLive, :new
+    live "/auctions", AuctionLive.Index, :index
+    live "/auctions/:id", AuctionLive.Show, :show
+    live "/admin", AdminLive.Dashboard, :index
   end
 
   # Other scopes may use custom stacks.

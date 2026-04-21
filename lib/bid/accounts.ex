@@ -16,6 +16,26 @@ defmodule BidPlatform.Accounts do
     |> Repo.all()
   end
 
+  def deactivate_user(user_id, tenant_id) do
+    User
+    |> where([u], u.id == ^user_id and u.tenant_id == ^tenant_id)
+    |> Repo.update_all(set: [is_active: false])
+  end
+
+  def create_invitation(tenant_id, email, role) do
+    token = :crypto.strong_rand_bytes(32) |> Base.url_encode64()
+
+    %BidPlatform.Accounts.Invitation{}
+    |> BidPlatform.Accounts.Invitation.changeset(%{
+      tenant_id: tenant_id,
+      email: email,
+      token: token,
+      role: role,
+      expired_at: DateTime.add(DateTime.utc_now(), 7, :day)
+    })
+    |> Repo.insert()
+  end
+
   @doc """
   Gets a single user by ID only. Use with caution as it bypasses tenant isolation.
   Only for internal authentication purposes.

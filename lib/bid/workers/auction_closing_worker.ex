@@ -22,8 +22,14 @@ defmodule BidPlatform.Workers.AuctionClosingWorker do
         %Auction{status: status} when status in ["closed", "force_closed", "cancelled"] ->
           :ok
 
-        %Auction{} = auction ->
-          close_auction(auction)
+        %Auction{end_time: end_time} = auction ->
+          # If the auction was extended, this job should just finish.
+          # A new job will have been scheduled by ConcurrentBidHandler.
+          if DateTime.compare(DateTime.utc_now(), end_time) != :lt do
+            close_auction(auction)
+          else
+            :ok
+          end
       end
     end)
 

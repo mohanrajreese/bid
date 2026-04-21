@@ -103,3 +103,50 @@
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
 /* This file is for your main application CSS */
+
+@layer utilities {
+  .glass {
+    @apply backdrop-blur-md bg-white/10 border border-white/20 shadow-xl;
+  }
+  
+  .glass-dark {
+    @apply backdrop-blur-md bg-black/20 border border-white/10 shadow-2xl;
+  }
+  
+  .text-glow {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  }
+  
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+
+  .bg-mesh {
+    background-color: hsla(240, 100%, 5%, 1);
+    background-image: 
+      radial-gradient(at 0% 0%, hsla(253, 16%, 7%, 1) 0, transparent 50%), 
+      radial-gradient(at 50% 0%, hsla(225, 39%, 30%, 1) 0, transparent 50%), 
+      radial-gradient(at 100% 0%, hsla(339, 49%, 30%, 1) 0, transparent 50%);
+  }
+}
+
+.btn-premium {
+  @apply relative overflow-hidden transition-all duration-300 transform hover:scale-105 active:scale-95;
+  @apply bg-gradient-to-r from-primary to-accent text-white font-bold py-2 px-6 rounded-lg shadow-lg;
+}
+
+.btn-premium::after {
+  content: '';
+  @apply absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent;
+  transition: left 0.5s ease-in-out;
+}
+
+.btn-premium:hover::after {
+  @apply left-[100%];
+}
