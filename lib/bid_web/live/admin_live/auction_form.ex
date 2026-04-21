@@ -85,14 +85,18 @@ defmodule BidPlatformWeb.AdminLive.AuctionForm do
             <.input field={@form[:type]} type="select" options={["english", "reverse"]} class="glass-dark border-white/10 text-white" />
           </div>
           <div>
-            <label class="text-white/50 text-xs font-bold pl-1">START PRICE</label>
+            <label class="text-white/50 text-xs font-bold pl-1">
+              <%= if @form[:type].value == "reverse", do: "CEILING PRICE (MAX)", else: "FLOOR PRICE (START)" %>
+            </label>
             <.input field={@form[:start_price]} type="number" step="0.01" class="glass-dark border-white/10 text-white" />
           </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="text-white/50 text-xs font-bold pl-1">MIN INCREMENT</label>
+            <label class="text-white/50 text-xs font-bold pl-1">
+               <%= if @form[:type].value == "reverse", do: "MIN DECREMENT", else: "MIN INCREMENT" %>
+            </label>
             <.input field={@form[:min_increment]} type="number" step="0.01" class="glass-dark border-white/10 text-white" />
           </div>
           <div>

@@ -7,47 +7,68 @@ defmodule BidPlatformWeb.AuctionLive.Index do
   @impl true
   def mount(_params, _session, socket) do
     if connected?(socket) do
-      # Subscribe to auction updates
-      # Phoenix.PubSub.subscribe(BidPlatform.PubSub, "auctions")
+      # Subscribe to auction updates if needed
     end
 
-    # For demo, we'll pick the first tenant if one exists
     tenant = Tenants.list_tenants() |> List.first()
-
     auctions = if tenant, do: Auctions.list_auctions(tenant.id), else: []
 
     {:ok,
      socket
      |> assign(:tenant, tenant)
      |> assign(:auctions, auctions)
-     |> assign(:page_title, "Active Auctions")}
+     |> assign(:search_query, "")
+     |> assign(:page_title, "Live Auctions")}
+  end
+
+  @impl true
+  def handle_event("search", %{"query" => query}, socket) do
+    # Simple search filtering
+    tenant_id = socket.assigns.tenant.id
+    all_auctions = Auctions.list_auctions(tenant_id)
+
+    filtered = if query == "" do
+      all_auctions
+    else
+      Enum.filter(all_auctions, fn a ->
+        String.contains?(String.downcase(a.title), String.downcase(query)) ||
+        String.contains?(String.downcase(a.description || ""), String.downcase(query))
+      end)
+    end
+
+    {:noreply,
+     socket
+     |> assign(auctions: filtered)
+     |> assign(search_query: query)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="space-y-8 animate-float">
-      <div class="flex items-end justify-between">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-12">
         <div>
-          <h1 class="text-4xl font-extrabold text-white tracking-tight sm:text-5xl text-glow">
-            Live Auctions
-          </h1>
-          <p class="mt-2 text-lg text-white/60">
-            Real-time multi-tenant bidding platform.
-          </p>
+          <h1 class="text-4xl font-black text-white text-glow">Live Auctions</h1>
+          <p class="text-white/60 mt-2">Discover and participate in high-stakes bidding.</p>
         </div>
-        <div class="hidden sm:block">
-          <button class="btn-premium">
-            Create Auction
-          </button>
+        <div class="flex items-center gap-2 w-full md:w-auto">
+          <form phx-change="search" class="relative flex-grow md:w-64">
+             <.icon name="hero-magnifying-glass" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+             <input type="text" name="query" value={@search_query} placeholder="Search auctions..." class="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-mono" />
+          </form>
+          <div class="flex items-center bg-white/5 rounded-xl border border-white/10 p-1">
+             <button class="px-3 py-1 text-[10px] font-bold text-white bg-primary rounded-lg">All</button>
+             <button class="px-3 py-1 text-[10px] font-bold text-white/40 hover:text-white">Active</button>
+             <button class="px-3 py-1 text-[10px] font-bold text-white/40 hover:text-white">Ended</button>
+          </div>
         </div>
       </div>
 
       <%= if Enum.empty?(@auctions) do %>
-        <div class="glass rounded-2xl p-12 text-center">
+        <div class="glass rounded-2xl p-12 text-center border-white/5">
           <.icon name="hero-scale" class="w-12 h-12 text-white/20 mx-auto" />
-          <h3 class="mt-4 text-xl font-semibold text-white">No active auctions</h3>
-          <p class="mt-2 text-white/50">Be the first to create one!</p>
+          <h3 class="mt-4 text-xl font-semibold text-white">No matching auctions</h3>
+          <p class="mt-2 text-white/50">Try a different search term or check back later.</p>
         </div>
       <% else %>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -62,14 +83,14 @@ defmodule BidPlatformWeb.AuctionLive.Index do
 
   defp auction_card(assigns) do
     ~H"""
-    <div class="glass group relative rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:bg-white/20">
+    <div class="glass group relative rounded-2xl p-6 transition-all duration-300 hover:scale-[1.02] hover:bg-white/20 border-white/5">
       <div class="flex justify-between items-start mb-4">
-        <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-primary/20 text-primary border border-primary/30">
+        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-primary/20 text-primary border border-primary/30">
           {@auction.type}
         </span>
-        <div class="flex items-center text-white/50 text-xs">
-          <.icon name="hero-clock" class="w-4 h-4 mr-1" />
-          <span class="font-mono">Live</span>
+        <div class="flex items-center text-white/50 text-[10px] font-bold uppercase tracking-widest">
+          <div class="w-2 h-2 rounded-full bg-success mr-2 animate-pulse"></div>
+          Live
         </div>
       </div>
 
@@ -77,24 +98,27 @@ defmodule BidPlatformWeb.AuctionLive.Index do
         {@auction.title}
       </h3>
 
-      <p class="text-white/60 text-sm line-clamp-2 mb-6">
+      <p class="text-white/60 text-sm line-clamp-2 mb-6 h-10">
         {@auction.description}
       </p>
 
       <div class="flex items-end justify-between">
         <div>
-          <span class="text-white/40 text-xs block uppercase font-bold tracking-widest">Current Bid</span>
-          <span class="text-2xl font-black text-white">
+          <span class="text-white/40 text-[10px] block uppercase font-bold tracking-widest">Current Bid</span>
+          <span class="text-2xl font-black text-white text-glow">
             ${@auction.current_price}
           </span>
         </div>
-        <a href={~p"/auctions/#{@auction.id}"} class="btn btn-sm glass-dark text-white border-white/20">
-          View Detail
-        </a>
+        <.link navigate={~p"/auctions/#{@auction.id}"} class="btn btn-sm glass-dark text-white border-white/10 hover:bg-primary hover:text-white transition-all rounded-xl">
+          Participate
+        </.link>
       </div>
 
-      <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-xs text-white/40">
-        <span>{@auction.bid_count} bids placed</span>
+      <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-white/40">
+        <div class="flex items-center gap-1">
+          <.icon name="hero-user-group" class="w-3 h-3" />
+          <span>{@auction.bid_count} Bids</span>
+        </div>
         <span>Ends in 2d 4h</span>
       </div>
     </div>
