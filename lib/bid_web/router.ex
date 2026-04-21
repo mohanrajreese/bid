@@ -21,9 +21,16 @@ defmodule BidPlatformWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", BidPlatformWeb do
-  #   pipe_through :api
-  # end
+  pipeline :authenticated_api do
+    plug :accepts, ["json"]
+    plug BidPlatformWeb.Plugs.Auth
+  end
+
+  scope "/api/v1", BidPlatformWeb do
+    pipe_through :authenticated_api
+
+    resources "/auctions", AuctionController, except: [:new, :edit]
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:bid, :dev_routes) do

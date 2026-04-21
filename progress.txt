@@ -45,3 +45,7 @@ Description: Configured Guardian, created BidPlatform.Guardian module, added aut
 Task: Add role-based access control
 Status: Completed
 Description: Created Authorize plug for RBAC and TenantScope utility for enforcing tenant isolation in Ecto queries.
+----------
+Task: Create auction APIs
+Status: Completed
+Description: Implemented AuctionController and AuctionJSON for RESTful API access. Enforced tenant isolation and RBAC via plugs and TenantScope. Updated router to include authenticated api/v1 routes.
