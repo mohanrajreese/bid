@@ -98,8 +98,19 @@ defmodule BidPlatform.Bidding.ConcurrentBidHandler do
         inc: [bid_count: 1]
       )
 
-    # Broadcast bid (to be implemented in Phase 5)
-    # BidPlatformWeb.Endpoint.broadcast(...)
+    # Broadcast bid
+    BidPlatformWeb.Endpoint.broadcast!(
+      "tenant:#{tenant_id}:auction:#{auction.id}",
+      "bid:new",
+      %{
+        bid_id: bid.id,
+        amount: bid.amount,
+        bidder_id: user_id,
+        current_price: amount,
+        bid_count: auction.bid_count + 1,
+        end_time: auction.end_time
+      }
+    )
 
     %{bid: bid, auction: %{auction | current_price: amount, bid_count: auction.bid_count + 1}}
   end

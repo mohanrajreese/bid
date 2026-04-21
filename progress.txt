@@ -65,3 +65,7 @@ Description: Created UserSocket with JWT authentication (Guardian integration) a
 Task: Implement auction subscriptions
 Status: Completed
 Description: Implemented AuctionChannel with topic-level tenant isolation. Subscribers only receive updates for auctions within their own tenant by validating topic parameters against socket assigns. Initial auction state is synced upon successful join.
+----------
+Task: Broadcast bids in real-time
+Status: Completed
+Description: Integrated Phoenix PubSub broadcasting into the concurrent bid placement flow. Successfully validated bids now trigger a 'bid:new' event on the tenant-isolated auction topic, ensuring all connected clients receive real-time updates.
