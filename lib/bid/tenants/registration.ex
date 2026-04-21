@@ -8,6 +8,10 @@ defmodule BidPlatform.Tenants.Registration do
   alias BidPlatform.Accounts.User
   alias BidPlatform.AuditLogs
 
+  def change_org(tenant, attrs \\ %{}) do
+    BidPlatform.Tenants.Tenant.changeset(tenant, attrs)
+  end
+
   @doc """
   Registers a new organization and creates the initial admin user.
   """

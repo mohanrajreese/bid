@@ -5,12 +5,13 @@ defmodule BidPlatformWeb.RegistrationLive do
   alias BidPlatform.Tenants.Tenant
   alias BidPlatform.Accounts.User
 
-  @impl true
   def mount(_params, _session, socket) do
+    tenant = %BidPlatform.Tenants.Tenant{}
+    changeset = BidPlatform.Tenants.Registration.change_org(tenant, %{})
+
     {:ok,
      socket
-     |> assign(:tenant_changeset, Tenant.changeset(%Tenant{}, %{}))
-     |> assign(:user_changeset, User.registration_changeset(%User{}, %{}))
+     |> assign_form(changeset)
      |> assign(:page_title, "Register your Organization")}
   end
 
@@ -24,7 +25,7 @@ defmodule BidPlatformWeb.RegistrationLive do
           <p class="text-white/60">Launch your own multi-tenant bidding environment in seconds.</p>
         </div>
 
-        <.form for={@tenant_changeset} phx-submit="register" class="space-y-6">
+        <.form for={@form} phx-submit="register" class="space-y-6">
           <div class="grid grid-cols-1 gap-y-6">
             <header class="border-b border-white/10 pb-2">
               <span class="text-primary font-bold text-xs uppercase tracking-widest">Organization Details</span>
@@ -32,13 +33,13 @@ defmodule BidPlatformWeb.RegistrationLive do
 
             <div>
               <label class="block text-sm font-bold text-white/50 mb-1 pl-1">ORG NAME</label>
-              <.input field={@tenant_changeset[:name]} placeholder="e.g. Acme Corp" class="glass-dark border-white/10 text-white" />
+              <.input field={@form[:name]} placeholder="e.g. Acme Corp" class="glass-dark border-white/10 text-white" />
             </div>
 
             <div>
               <label class="block text-sm font-bold text-white/50 mb-1 pl-1">SUBDOMAIN</label>
               <div class="flex items-center">
-                <.input field={@tenant_changeset[:subdomain]} placeholder="acme" class="rounded-r-none glass-dark border-white/10 text-white flex-1" />
+                <.input field={@form[:subdomain]} placeholder="acme" class="rounded-r-none glass-dark border-white/10 text-white flex-1" />
                 <span class="bg-white/5 border border-l-0 border-white/10 px-4 py-3 text-white/40 rounded-r-xl font-mono text-sm leading-6">
                   .bidapp.sh
                 </span>
@@ -65,6 +66,12 @@ defmodule BidPlatformWeb.RegistrationLive do
             Create My Environment
           </button>
         </.form>
+
+        <div class="text-center pt-4">
+          <p class="text-xs text-white/40">
+            Already have an account? <.link navigate={~p"/login"} class="text-primary hover:underline font-bold">Log in</.link>
+          </p>
+        </div>
       </div>
     </div>
     """
@@ -77,10 +84,14 @@ defmodule BidPlatformWeb.RegistrationLive do
         {:noreply,
          socket
          |> put_flash(:info, "Organization #{tenant.name} registered successfully!")
-         |> redirect(to: ~p"/auth/login")}
+         |> redirect(to: ~p"/login")}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :tenant_changeset, changeset)}
+        {:noreply, assign_form(socket, changeset)}
     end
+  end
+
+  defp assign_form(socket, %Ecto.Changeset{} = changeset) do
+    assign(socket, :form, to_form(changeset))
   end
 end
