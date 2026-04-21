@@ -29,9 +29,21 @@ defmodule BidPlatform.Auctions do
   Creates an auction.
   """
   def create_auction(attrs \\ %{}) do
-    %Auction{}
-    |> Auction.changeset(attrs)
-    |> Repo.insert()
+    Repo.transaction(fn ->
+      with {:ok, auction} <- %Auction{} |> Auction.changeset(attrs) |> Repo.insert() do
+        # Schedule closing job
+        schedule_closing_job(auction)
+        auction
+      else
+        {:error, changeset} -> Repo.rollback(changeset)
+      end
+    end)
+  end
+
+  defp schedule_closing_job(auction) do
+    %{auction_id: auction.id, tenant_id: auction.tenant_id}
+    |> BidPlatform.Workers.AuctionClosingWorker.new(scheduled_at: auction.end_time)
+    |> Oban.insert!()
   end
 
   @doc """

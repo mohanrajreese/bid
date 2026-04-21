@@ -69,7 +69,13 @@ config :bid, BidPlatform.Guardian,
 # Oban configuration
 config :bid, Oban,
   repo: BidPlatform.Repo,
-  plugins: [Oban.Plugins.Pruner],
+  plugins: [
+    Oban.Plugins.Pruner,
+    {Oban.Plugins.Cron, crontab: [
+      # Run ghost sweep every minute
+      {"* * * * *", BidPlatform.Workers.AuctionGhostSweepWorker}
+    ]}
+  ],
   queues: [default: 10, auctions: 50, notifications: 20]
 
 # Import environment specific config. This must remain at the bottom
