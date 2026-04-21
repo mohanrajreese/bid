@@ -29,3 +29,7 @@ Description: Created tenants table migration, Tenant schema, and Tenants context
 Task: Create User schema
 Status: Completed
 Description: Created users table migration, User schema, and Accounts context. Added bcrypt_elixir and guardian dependencies.
+----------
+Task: Create Auction schema
+Status: Completed
+Description: Created auctions table migration, Auction schema, and Auctions context. Updated Tenant and User schemas with associations.

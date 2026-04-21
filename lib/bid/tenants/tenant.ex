@@ -14,9 +14,7 @@ defmodule BidPlatform.Tenants.Tenant do
     field :settings, :map, default: %{}
 
     has_many :users, BidPlatform.Accounts.User
-
-    # Associations can be added here as other schemas are created
-    # has_many :auctions, BidPlatform.Auctions.Auction
+    has_many :auctions, BidPlatform.Auctions.Auction
 
     timestamps()
   end

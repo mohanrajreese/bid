@@ -15,6 +15,7 @@ defmodule BidPlatform.Accounts.User do
     field :last_login_at, :utc_datetime
 
     belongs_to :tenant, BidPlatform.Tenants.Tenant, type: :binary_id
+    has_many :auctions, BidPlatform.Auctions.Auction, foreign_key: :created_by
 
     timestamps()
   end
