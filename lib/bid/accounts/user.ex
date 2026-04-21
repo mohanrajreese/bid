@@ -16,6 +16,7 @@ defmodule BidPlatform.Accounts.User do
 
     belongs_to :tenant, BidPlatform.Tenants.Tenant, type: :binary_id
     has_many :auctions, BidPlatform.Auctions.Auction, foreign_key: :created_by
+    has_many :bids, BidPlatform.Bidding.Bid
 
     timestamps()
   end

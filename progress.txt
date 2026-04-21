@@ -33,3 +33,7 @@ Description: Created users table migration, User schema, and Accounts context. A
 Task: Create Auction schema
 Status: Completed
 Description: Created auctions table migration, Auction schema, and Auctions context. Updated Tenant and User schemas with associations.
+----------
+Task: Create Bid schema
+Status: Completed
+Description: Created bids table migration, Bid schema, and Bidding context. Updated Auction and User schemas with associations.

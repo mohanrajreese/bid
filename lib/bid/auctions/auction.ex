@@ -32,7 +32,7 @@ defmodule BidPlatform.Auctions.Auction do
     belongs_to :creator, BidPlatform.Accounts.User, type: :binary_id, foreign_key: :created_by
     belongs_to :winner, BidPlatform.Accounts.User, type: :binary_id, foreign_key: :winner_id
 
-    # has_many :bids, BidPlatform.Bidding.Bid
+    has_many :bids, BidPlatform.Bidding.Bid
 
     timestamps()
   end
