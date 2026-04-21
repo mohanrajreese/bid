@@ -29,7 +29,9 @@ defmodule BidPlatformWeb.Router do
   scope "/api/v1", BidPlatformWeb do
     pipe_through :authenticated_api
 
-    resources "/auctions", AuctionController, except: [:new, :edit]
+    resources "/auctions", AuctionController, except: [:new, :edit] do
+      resources "/bids", BidController, only: [:create, :index]
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

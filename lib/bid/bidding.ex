@@ -6,6 +6,14 @@ defmodule BidPlatform.Bidding do
   import Ecto.Query, warn: false
   alias BidPlatform.Repo
   alias BidPlatform.Bidding.Bid
+  alias BidPlatform.Bidding.ConcurrentBidHandler
+
+  @doc """
+  Places a bid safely using pessimistic locking.
+  """
+  def place_bid(tenant_id, auction_id, user_id, amount) do
+    ConcurrentBidHandler.place_bid(tenant_id, auction_id, user_id, amount)
+  end
 
   @doc """
   Returns the list of bids for an auction.

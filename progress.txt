@@ -49,3 +49,7 @@ Description: Created Authorize plug for RBAC and TenantScope utility for enforci
 Task: Create auction APIs
 Status: Completed
 Description: Implemented AuctionController and AuctionJSON for RESTful API access. Enforced tenant isolation and RBAC via plugs and TenantScope. Updated router to include authenticated api/v1 routes.
+----------
+Task: Implement bidding logic
+Status: Completed
+Description: Created ConcurrentBidHandler for concurrency-safe bidding using PostgreSQL locks. Augmented Bidding context with place_bid/4. Implemented BidController and BidJSON with nested routing under auctions.
