@@ -33,7 +33,7 @@ defmodule BidPlatformWeb.Router do
 
     live_session :authenticated,
       on_mount: [{BidPlatformWeb.UserAuth, :mount_current_user}] do
-      live "/register", RegistrationLive, :new
+      live "/super-admin/tenants/new", RegistrationLive, :new
       live "/login", AuthLive.Login, :new
       live "/auctions", AuctionLive.Index, :index
       live "/auctions/:id", AuctionLive.Show, :show

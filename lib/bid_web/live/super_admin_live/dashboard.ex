@@ -51,7 +51,7 @@ defmodule BidPlatformWeb.SuperAdminLive.Dashboard do
               Recent Organizations
             </h2>
             <.link
-              navigate={~p"/register"}
+              navigate={~p"/super-admin/tenants/new"}
               class="btn btn-sm btn-primary rounded-xl flex items-center gap-2"
             >
               <.icon name="hero-plus-circle" class="w-4 h-4" />
