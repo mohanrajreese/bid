@@ -8,6 +8,11 @@ defmodule BidPlatformWeb.Router do
     plug :put_root_layout, html: {BidPlatformWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_user
+  end
+
+  defp fetch_current_user(conn, _opts) do
+    BidPlatformWeb.UserAuth.fetch_current_user(conn, [])
   end
 
   pipeline :api do
@@ -23,18 +28,22 @@ defmodule BidPlatformWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "/register", RegistrationLive, :new
-    live "/login", AuthLive.Login, :new
+    post "/login", AuthController, :create
     delete "/logout", AuthController, :delete
-    live "/auctions", AuctionLive.Index, :index
-    live "/auctions/:id", AuctionLive.Show, :show
-    live "/my-bids", BidderLive.Dashboard, :index
-    live "/admin", AdminLive.Dashboard, :index
-    live "/admin/new", AdminLive.Dashboard, :new
-    live "/admin/:id/edit", AdminLive.Dashboard, :edit
-    live "/admin/members", AdminLive.UserManagement, :index
 
-    live "/super-admin", SuperAdminLive.Dashboard, :index
+    live_session :authenticated,
+      on_mount: [{BidPlatformWeb.UserAuth, :mount_current_user}] do
+      live "/register", RegistrationLive, :new
+      live "/login", AuthLive.Login, :new
+      live "/auctions", AuctionLive.Index, :index
+      live "/auctions/:id", AuctionLive.Show, :show
+      live "/my-bids", BidderLive.Dashboard, :index
+      live "/admin", AdminLive.Dashboard, :index
+      live "/admin/new", AdminLive.Dashboard, :new
+      live "/admin/:id/edit", AdminLive.Dashboard, :edit
+      live "/admin/members", AdminLive.UserManagement, :index
+      live "/super-admin", SuperAdminLive.Dashboard, :index
+    end
   end
 
   # Other scopes may use custom stacks.

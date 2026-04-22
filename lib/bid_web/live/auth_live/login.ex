@@ -10,6 +10,7 @@ defmodule BidPlatformWeb.AuthLive.Login do
      |> assign(:email, "")
      |> assign(:password, "")
      |> assign(:error_message, nil)
+     |> assign(:trigger_action, false)
      |> assign(:page_title, "Log in")}
   end
 
@@ -26,7 +27,14 @@ defmodule BidPlatformWeb.AuthLive.Login do
           <p class="text-white/60">Log in to your secure bidding console.</p>
         </div>
 
-        <form phx-submit="login" class="space-y-6">
+        <.form
+          for={%{}}
+          as={:user}
+          action={~p"/login"}
+          phx-submit="login"
+          phx-trigger-action={@trigger_action}
+          class="space-y-6"
+        >
           <div class="space-y-1">
             <label class="block text-sm font-bold text-white/50 mb-1 pl-1">EMAIL ADDRESS</label>
             <input
@@ -57,7 +65,7 @@ defmodule BidPlatformWeb.AuthLive.Login do
           <button type="submit" class="w-full btn-premium py-4 mt-4">
             Authenticate & Enter
           </button>
-        </form>
+        </.form>
 
         <div class="text-center pt-4">
           <p class="text-white/20 text-[10px] uppercase font-black tracking-widest leading-loose">
@@ -76,19 +84,12 @@ defmodule BidPlatformWeb.AuthLive.Login do
       nil ->
         {:noreply, assign(socket, error_message: "Invalid email or password")}
 
-      user ->
-        # Adaptive Redirection based on Role
-        redirect_path =
-          case user.role do
-            "super_admin" -> ~p"/super-admin"
-            "admin" -> ~p"/admin"
-            _ -> ~p"/auctions"
-          end
-
+      _user ->
+        # Validate password here and then trigger the action to the controller
         {:noreply,
          socket
-         |> put_flash(:info, "Authenticated as #{String.capitalize(user.role)}")
-         |> redirect(to: redirect_path)}
+         |> assign(:email, email)
+         |> assign(:trigger_action, true)}
     end
   end
 end
