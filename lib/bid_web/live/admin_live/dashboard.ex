@@ -51,6 +51,13 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
     |> assign(:auction, %BidPlatform.Auctions.Auction{})
   end
 
+  defp apply_action(socket, :edit, %{"id" => id}) do
+    auction = Auctions.get_auction(socket.assigns.tenant_id, id)
+    socket
+    |> assign(:page_title, "Edit Auction")
+    |> assign(:auction, auction)
+  end
+
   @impl true
   def handle_info({BidPlatformWeb.AdminLive.AuctionForm, {:saved, _auction}}, socket) do
     tenant_id = socket.assigns.tenant_id
@@ -80,7 +87,7 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
         </div>
       </div>
 
-      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={JS.patch(~p"/tenant-admin")}>
+      <.modal :if={@live_action in [:new, :edit]} id="auction-modal" show on_cancel={JS.patch(~p"/tenant-admin")}>
         <.live_component
           module={BidPlatformWeb.AdminLive.AuctionForm}
           id={@auction.id || :new}
@@ -134,7 +141,7 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex gap-2">
-                    <button class="btn btn-xs glass border-white/10 text-white">Edit</button>
+                    <.link patch={~p"/tenant-admin/#{auction.id}/edit"} class="btn btn-xs glass border-white/10 text-white">Edit</.link>
                     <a href={~p"/auctions/#{auction.id}"} class="btn btn-xs glass-dark border-white/10 text-white">View</a>
                   </div>
                 </td>

@@ -6,26 +6,27 @@ defmodule BidPlatformWeb.AuctionLive.Index do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      # Subscribe to auction updates if needed
+    # Mount current user is already handled by live_session on_mount
+    current_user = socket.assigns.current_user
+
+    if current_user do
+      auctions = Auctions.list_auctions(current_user.tenant_id)
+
+      {:ok,
+       socket
+       |> assign(:tenant_id, current_user.tenant_id)
+       |> assign(:auctions, auctions)
+       |> assign(:search_query, "")
+       |> assign(:page_title, "Live Auctions")}
+    else
+      {:ok, redirect(socket, to: ~p"/login")}
     end
-
-    tenant = Tenants.list_tenants() |> List.first()
-    auctions = if tenant, do: Auctions.list_auctions(tenant.id), else: []
-
-    {:ok,
-     socket
-     |> assign(:tenant, tenant)
-     |> assign(:auctions, auctions)
-     |> assign(:search_query, "")
-     |> assign(:page_title, "Live Auctions")}
   end
 
   @impl true
   def handle_event("search", %{"query" => query}, socket) do
     # Simple search filtering
-    tenant_id = socket.assigns.tenant.id
-    all_auctions = Auctions.list_auctions(tenant_id)
+    all_auctions = Auctions.list_auctions(socket.assigns.tenant_id)
 
     filtered = if query == "" do
       all_auctions

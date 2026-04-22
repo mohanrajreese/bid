@@ -7,29 +7,40 @@ defmodule BidPlatformWeb.AuctionLive.Show do
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
-    # For demo, using dummy tenant and user since auth UI is TBD
-    tenant = BidPlatform.Tenants.list_tenants() |> List.first()
-    auction = Auctions.get_auction(tenant.id, id)
+    # Mount current user is already handled by live_session on_mount
+    current_user = socket.assigns.current_user
 
-    if connected?(socket) do
-      BidPlatformWeb.Endpoint.subscribe("tenant:#{tenant.id}:auction:#{id}")
+    if current_user do
+      auction = Auctions.get_auction(current_user.tenant_id, id)
+
+      if auction do
+        if connected?(socket) do
+          BidPlatformWeb.Endpoint.subscribe("tenant:#{current_user.tenant_id}:auction:#{id}")
+        end
+
+        {:ok,
+         socket
+         |> assign(:auction, auction)
+         |> assign(:tenant_id, current_user.tenant_id)
+         |> assign(:bid_amount, "")
+         |> assign(:error_message, nil)
+         |> assign(:page_title, auction.title)}
+      else
+        {:ok,
+         socket
+         |> put_flash(:error, "Auction not found or unauthorized access.")
+         |> redirect(to: ~p"/auctions")}
+      end
+    else
+      {:ok, redirect(socket, to: ~p"/login")}
     end
-
-    {:ok,
-     socket
-     |> assign(:auction, auction)
-     |> assign(:tenant, tenant)
-     |> assign(:current_user, %{id: auction.created_by, email: "bidder@example.com"}) # Dummy user
-     |> assign(:bid_amount, "")
-     |> assign(:error_message, nil)
-     |> assign(:page_title, auction.title)}
   end
 
   @impl true
   def handle_event("place_bid", %{"amount" => amount}, socket) do
     case Decimal.parse(amount) do
       {value, ""} ->
-        case Bidding.place_bid(socket.assigns.tenant.id, socket.assigns.auction.id, socket.assigns.current_user.id, value) do
+        case Bidding.place_bid(socket.assigns.tenant_id, socket.assigns.auction.id, socket.assigns.current_user.id, value) do
           {:ok, %{auction: updated_auction}} ->
             {:noreply, assign(socket, auction: updated_auction, bid_amount: "", error_message: nil)}
 
