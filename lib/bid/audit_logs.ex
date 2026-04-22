@@ -31,4 +31,17 @@ defmodule BidPlatform.AuditLogs do
     |> preload([:user])
     |> Repo.all()
   end
+
+  @doc """
+  Lists audit logs globally (Super Admin only).
+  """
+  def list_all_logs(opts \\ []) do
+    limit = Keyword.get(opts, :limit, 50)
+
+    AuditLog
+    |> order_by([l], desc: l.inserted_at)
+    |> limit(^limit)
+    |> preload([:user, :tenant])
+    |> Repo.all()
+  end
 end

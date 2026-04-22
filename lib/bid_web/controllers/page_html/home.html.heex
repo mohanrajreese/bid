@@ -2,13 +2,12 @@
   <div class="mx-auto max-w-7xl px-6 pb-24 pt-10 sm:pb-32 lg:flex lg:px-8 lg:pt-40">
     <div class="mx-auto max-w-2xl flex-shrink-0 lg:mx-0 lg:max-w-xl lg:pt-8">
       <div class="mt-24 sm:mt-32 lg:mt-16">
-        <a href={~p"/register"} class="inline-flex space-x-6">
-          <span class="rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold leading-6 text-primary ring-1 ring-inset ring-primary/20">What's new</span>
+        <div class="inline-flex space-x-6">
+          <span class="rounded-full bg-indigo-500/10 px-3 py-1 text-sm font-semibold leading-6 text-indigo-400 ring-1 ring-inset ring-indigo-500/20">Alpha Access</span>
           <span class="inline-flex items-center space-x-2 text-sm font-medium leading-6 text-white/60">
-            <span>v1.0 is now live</span>
-            <.icon name="hero-chevron-right" class="h-5 w-5 text-white/30" />
+            <span>Powered by Elixir & Phoenix</span>
           </span>
-        </a>
+        </div>
       </div>
       <h1 class="mt-10 text-4xl font-black tracking-tight text-white text-glow sm:text-6xl">
         The Future of <span class="text-primary">Real-Time</span> Bidding.
@@ -17,9 +16,9 @@
         Scale your auctions with our enterprise-grade multi-tenant platform. English, Reverse, and Proxy bidding out of the box. 
       </p>
       <div class="mt-10 flex items-center gap-x-6">
-        <.link navigate={~p"/register"} class="btn btn-primary btn-lg rounded-2xl shadow-2xl">
-          Get Started for Free
-        </.link>
+        <a href={~p"/login"} class="btn btn-primary btn-lg rounded-2xl shadow-2xl">
+          Log in to Dashboard
+        </a>
         <a href={~p"/auctions"} class="text-sm font-black leading-6 text-white uppercase tracking-widest hover:text-primary transition-colors">
           View Live Auctions <span aria-hidden="true">→</span>
         </a>

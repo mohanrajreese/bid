@@ -32,6 +32,8 @@ defmodule BidPlatformWeb.Router do
     live "/admin", AdminLive.Dashboard, :index
     live "/admin/new", AdminLive.Dashboard, :new
     live "/admin/:id/edit", AdminLive.Dashboard, :edit
+
+    live "/super-admin", SuperAdminLive.Dashboard, :index
   end
 
   # Other scopes may use custom stacks.

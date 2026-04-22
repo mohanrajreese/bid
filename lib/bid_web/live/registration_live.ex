@@ -5,14 +5,25 @@ defmodule BidPlatformWeb.RegistrationLive do
   alias BidPlatform.Tenants.Tenant
   alias BidPlatform.Accounts.User
 
+  @impl true
   def mount(_params, _session, socket) do
-    tenant = %BidPlatform.Tenants.Tenant{}
-    changeset = BidPlatform.Tenants.Registration.change_org(tenant, %{})
+    # Restrict registration to Super Admins only
+    current_user = socket.assigns[:current_user]
 
-    {:ok,
-     socket
-     |> assign_form(changeset)
-     |> assign(:page_title, "Register your Organization")}
+    if current_user && current_user.role == "super_admin" do
+      tenant = %BidPlatform.Tenants.Tenant{}
+      changeset = BidPlatform.Tenants.Registration.change_org(tenant, %{})
+
+      {:ok,
+       socket
+       |> assign_form(changeset)
+       |> assign(:page_title, "Provision New Organization")}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "Unauthorized access. Only platform administrators can provision new tenants.")
+       |> redirect(to: "/")}
+    end
   end
 
   @impl true
@@ -92,6 +103,6 @@ defmodule BidPlatformWeb.RegistrationLive do
   end
 
   defp assign_form(socket, %Ecto.Changeset{} = changeset) do
-    assign(socket, :form, to_form(changeset))
+    assign(socket, :form, to_form(changeset, as: :tenant))
   end
 end

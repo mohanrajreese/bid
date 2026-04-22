@@ -26,7 +26,7 @@ defmodule BidPlatform.Accounts.User do
     |> cast(attrs, [:email, :password, :name, :role, :is_active, :tenant_id])
     |> validate_required([:email, :name, :role, :tenant_id])
     |> validate_format(:email, ~r/^[\w.!#$%&'*+\/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+$/)
-    |> validate_inclusion(:role, ~w[admin bidder])
+    |> validate_inclusion(:role, ~w[admin bidder super_admin])
     |> unique_constraint([:email, :tenant_id], message: "already registered in this organization")
     |> put_password_hash()
   end
