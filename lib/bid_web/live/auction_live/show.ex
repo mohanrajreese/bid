@@ -109,44 +109,61 @@ defmodule BidPlatformWeb.AuctionLive.Show do
 
       <!-- Bidding Sidebar -->
       <div class="space-y-6">
-        <div class="glass-dark rounded-3xl p-8 border-primary/30 relative overflow-hidden">
-          <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-3xl rounded-full"></div>
+        <%= if @current_user.role == "bidder" do %>
+          <div class="glass-dark rounded-3xl p-8 border-primary/30 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary/20 blur-3xl rounded-full"></div>
 
-          <div class="relative z-10 text-center space-y-2 mb-8">
-            <span class="text-primary font-bold text-sm uppercase tracking-widest">Current Price</span>
-            <div class="text-5xl font-black text-white tracking-tight text-glow">
-              ${@auction.current_price}
+            <div class="relative z-10 text-center space-y-2 mb-8">
+              <span class="text-primary font-bold text-sm uppercase tracking-widest">Current Price</span>
+              <div class="text-5xl font-black text-white tracking-tight text-glow">
+                ${@auction.current_price}
+              </div>
             </div>
+
+            <form phx-submit="place_bid" class="space-y-4">
+              <div class="space-y-1">
+                <label class="text-white/50 text-xs font-bold pl-1">YOUR BID AMOUNT</label>
+                <input
+                  type="number"
+                  name="amount"
+                  step="0.01"
+                  value={@bid_amount}
+                  placeholder={"Min. $#{Decimal.add(@auction.current_price, @auction.min_increment)}"}
+                  class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+                />
+              </div>
+
+              <%= if @error_message do %>
+                <p class="text-error text-xs font-bold bg-error/10 p-2 rounded-lg border border-error/20">
+                  {@error_message}
+                </p>
+              <% end %>
+
+              <button type="submit" class="w-full btn-premium py-4">
+                Place Bid Now
+              </button>
+            </form>
+
+            <p class="mt-6 text-center text-white/40 text-[10px] uppercase font-bold tracking-tighter">
+              Secure multi-tenant encrypted transaction
+            </p>
           </div>
-
-          <form phx-submit="place_bid" class="space-y-4">
-            <div class="space-y-1">
-              <label class="text-white/50 text-xs font-bold pl-1">YOUR BID AMOUNT</label>
-              <input
-                type="number"
-                name="amount"
-                step="0.01"
-                value={@bid_amount}
-                placeholder={"Min. $#{Decimal.add(@auction.current_price, @auction.min_increment)}"}
-                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
-              />
+        <% else %>
+          <div class="glass-dark rounded-3xl p-8 border-indigo-500/30 text-center space-y-4">
+            <div class="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mx-auto border border-indigo-500/20">
+              <.icon name="hero-shield-check" class="w-8 h-8 text-indigo-400" />
             </div>
-
-            <%= if @error_message do %>
-              <p class="text-error text-xs font-bold bg-error/10 p-2 rounded-lg border border-error/20">
-                {@error_message}
-              </p>
+            <div>
+              <h3 class="text-lg font-bold text-white">Admin View</h3>
+              <p class="text-white/50 text-sm mt-1">You are viewing this auction as an administrator. Only registered bidders can place bids.</p>
+            </div>
+            <%= if @current_user.role == "admin" do %>
+              <.link navigate={~p"/tenant-admin"} class="block w-full py-3 rounded-xl bg-white/5 border border-white/10 text-white font-bold hover:bg-white/10 transition-all text-sm">
+                Back to Command Center
+              </.link>
             <% end %>
-
-            <button type="submit" class="w-full btn-premium py-4">
-              Place Bid Now
-            </button>
-          </form>
-
-          <p class="mt-6 text-center text-white/40 text-[10px] uppercase font-bold tracking-tighter">
-            Secure multi-tenant encrypted transaction
-          </p>
-        </div>
+          </div>
+        <% end %>
       </div>
     </div>
     """

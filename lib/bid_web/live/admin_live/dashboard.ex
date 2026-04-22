@@ -58,6 +58,19 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
     |> assign(:auction, auction)
   end
 
+  def handle_event("activate", %{"id" => id}, socket) do
+    auction = Auctions.get_auction(socket.assigns.tenant_id, id)
+    case Auctions.update_auction(auction, %{status: "active"}) do
+      {:ok, _} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Auction activated successfully")
+         |> assign(:auctions, Auctions.list_auctions(socket.assigns.tenant_id))}
+      {:error, _} ->
+        {:noreply, put_flash(socket, :error, "Failed to activate auction")}
+    end
+  end
+
   @impl true
   def handle_info({BidPlatformWeb.AdminLive.AuctionForm, {:saved, _auction}}, socket) do
     tenant_id = socket.assigns.tenant_id
@@ -141,6 +154,9 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
                 </td>
                 <td class="px-6 py-4">
                   <div class="flex gap-2">
+                    <%= if auction.status == "draft" do %>
+                      <button phx-click="activate" phx-value-id={auction.id} class="btn btn-xs btn-success text-white border-none">Activate</button>
+                    <% end %>
                     <.link patch={~p"/tenant-admin/#{auction.id}/edit"} class="btn btn-xs glass border-white/10 text-white">Edit</.link>
                     <a href={~p"/auctions/#{auction.id}"} class="btn btn-xs glass-dark border-white/10 text-white">View</a>
                   </div>

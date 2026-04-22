@@ -39,14 +39,23 @@ defmodule BidPlatform.Bidding.ConcurrentBidHandler do
             Repo.rollback({:auction_not_active, status})
 
           %Auction{} = auction ->
-            # 2. Validate bid against the locked state
-            case validate_bid_amount(auction, user_id, amount) do
-              :ok ->
-                # 3. Execute bid insertion and auction update
-                execute_bid(auction, tenant_id, user_id, amount)
+            # 2. Validate user identity and role
+            user = BidPlatform.Accounts.get_user!(user_id)
 
-              {:error, reason} ->
-                Repo.rollback(reason)
+            cond do
+              user.role != "bidder" ->
+                Repo.rollback(:only_bidders_can_bid)
+
+              true ->
+                # 3. Validate bid against the locked state
+                case validate_bid_amount(auction, user_id, amount) do
+                  :ok ->
+                    # 4. Execute bid insertion and auction update
+                    execute_bid(auction, tenant_id, user_id, amount)
+
+                  {:error, reason} ->
+                    Repo.rollback(reason)
+                end
             end
         end
       end,
