@@ -16,6 +16,9 @@ defmodule BidPlatform.Tenants.Registration do
   Registers a new organization and creates the initial admin user.
   """
   def register_org(org_attrs, user_attrs) do
+    IO.inspect(org_attrs, label: "REGISTRATION ORG ATTRS")
+    IO.inspect(user_attrs, label: "REGISTRATION USER ATTRS")
+
     Repo.transaction(fn ->
       with {:ok, tenant} <- create_tenant(org_attrs),
            {:ok, user} <- create_admin_user(tenant, user_attrs),
@@ -34,7 +37,8 @@ defmodule BidPlatform.Tenants.Registration do
   end
 
   defp create_admin_user(tenant, attrs) do
-    attrs = Map.merge(attrs, %{tenant_id: tenant.id, role: "admin"})
+    # Merge using string keys to maintain consistency with the form parameters
+    attrs = Map.merge(attrs, %{"tenant_id" => tenant.id, "role" => "admin"})
 
     %User{}
     |> User.registration_changeset(attrs)

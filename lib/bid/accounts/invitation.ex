@@ -21,6 +21,7 @@ defmodule BidPlatform.Accounts.Invitation do
     invitation
     |> cast(attrs, [:tenant_id, :email, :token, :role, :accepted_at, :expired_at])
     |> validate_required([:tenant_id, :email, :token])
+    |> validate_inclusion(:role, ~w[admin bidder])
     |> unique_constraint(:token)
   end
 end

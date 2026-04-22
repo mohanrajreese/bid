@@ -100,8 +100,11 @@ defmodule BidPlatformWeb.AdminLive.UserManagement do
             </div>
 
             <div class="space-y-1">
-              <label class="text-xs font-bold text-white/50 uppercase pl-1">Role</label>
-              <.input field={@form[:role]} type="select" options={[{"Bidder", "bidder"}, {"Admin", "admin"}]} class="glass-dark" />
+              <label class="text-xs font-bold text-white/50 uppercase pl-1 text-glow">Role</label>
+              <div class="glass-dark p-3 rounded-xl border border-white/10 text-white/60 text-sm flex items-center gap-2 italic">
+                <.icon name="hero-user" class="w-4 h-4" />
+                Participant (Bidder)
+              </div>
             </div>
 
             <div class="space-y-1">
@@ -111,7 +114,7 @@ defmodule BidPlatformWeb.AdminLive.UserManagement do
 
             <div class="pt-4">
               <button type="submit" class="w-full btn btn-primary py-4 rounded-xl font-bold">
-                Create Account
+                Create Bidder Account
               </button>
             </div>
           </.form>
@@ -123,12 +126,18 @@ defmodule BidPlatformWeb.AdminLive.UserManagement do
 
   @impl true
   def handle_event("save-user", %{"user" => user_params}, socket) do
+    # Only Bidders can be created by Tenant Admins
+    user_params =
+      user_params
+      |> Map.put("tenant_id", socket.assigns.current_user.tenant_id)
+      |> Map.put("role", "bidder")
+
     case Accounts.create_user(user_params) do
       {:ok, _user} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Member created successfully")
-         |> push_patch(to: ~p"/admin/members")
+         |> put_flash(:info, "Bidder account created successfully")
+         |> push_patch(to: ~p"/tenant-admin/members")
          |> assign(:users, Accounts.list_users(socket.assigns.current_user.tenant_id))}
 
       {:error, changeset} ->

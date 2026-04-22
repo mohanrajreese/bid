@@ -38,10 +38,10 @@ defmodule BidPlatformWeb.Router do
       live "/auctions", AuctionLive.Index, :index
       live "/auctions/:id", AuctionLive.Show, :show
       live "/my-bids", BidderLive.Dashboard, :index
-      live "/admin", AdminLive.Dashboard, :index
-      live "/admin/new", AdminLive.Dashboard, :new
-      live "/admin/:id/edit", AdminLive.Dashboard, :edit
-      live "/admin/members", AdminLive.UserManagement, :index
+      live "/tenant-admin", AdminLive.Dashboard, :index
+      live "/tenant-admin/new", AdminLive.Dashboard, :new
+      live "/tenant-admin/:id/edit", AdminLive.Dashboard, :edit
+      live "/tenant-admin/members", AdminLive.UserManagement, :index
       live "/super-admin", SuperAdminLive.Dashboard, :index
     end
   end

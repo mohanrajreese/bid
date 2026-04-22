@@ -57,10 +57,15 @@
               <li><.link navigate={~p"/super-admin"} class="text-indigo-400 font-bold"><.icon name="hero-shield-check" class="w-4 h-4" /> Command Center</.link></li>
             <% end %>
             <%= if @current_user.role == "admin" do %>
-              <li><a href={~p"/admin"}>Dashboard</a></li>
-              <li><.link navigate={~p"/admin/members"}>Members</.link></li>
+              <li><a href={~p"/tenant-admin"}>Dashboard</a></li>
+              <li><.link navigate={~p"/tenant-admin/members"}>Members</.link></li>
             <% end %>
-            <li><.link href={~p"/logout"} method="delete">Logout</.link></li>
+            <li class="mt-2 pt-2 border-t border-white/5">
+              <.link href={~p"/logout"} method="delete" class="text-error font-bold hover:bg-error/10">
+                <.icon name="hero-arrow-right-on-rectangle" class="w-4 h-4 mr-2" />
+                Sign Out
+              </.link>
+            </li>
           </ul>
         </div>
       <% else %>

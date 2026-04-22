@@ -27,11 +27,23 @@ defmodule BidPlatformWeb.SuperAdminLive.Dashboard do
   def render(assigns) do
     ~H"""
     <div class="space-y-8 animate-in fade-in duration-700">
-      <header>
-        <h1 class="text-4xl font-black text-white tracking-tight">
-          Command <span class="text-indigo-400">Center</span>
-        </h1>
-        <p class="text-slate-400 mt-2">Overseeing the global bidding ecosystem.</p>
+      <header class="flex items-center justify-between mb-12">
+        <div>
+          <h1 class="text-5xl font-black text-white tracking-tighter text-glow">
+            Command <span class="text-indigo-400">Center</span>
+          </h1>
+          <p class="text-white/40 mt-2 font-medium">Platform-wide governance and administrative intelligence.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <.link href={~p"/logout"} method="delete" class="btn btn-ghost border-white/10 hover:bg-error/10 hover:text-error rounded-xl px-6 font-bold transition-all">
+            <.icon name="hero-arrow-right-on-rectangle" class="w-4 h-4 mr-2" />
+            Sign Out
+          </.link>
+          <.link navigate={~p"/super-admin/tenants/new"} class="btn btn-primary rounded-xl px-8 shadow-xl shadow-indigo-500/20 font-bold">
+            <.icon name="hero-plus-circle" class="w-5 h-5 mr-2" />
+            Create New Org
+          </.link>
+        </div>
       </header>
 
       <!-- KPI Cards -->
@@ -45,18 +57,11 @@ defmodule BidPlatformWeb.SuperAdminLive.Dashboard do
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Organizations Table -->
         <div class="lg:col-span-2 glass-panel p-6">
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center justify-between mb-6 border-b border-white/5 pb-4">
             <h2 class="text-xl font-bold text-white flex items-center gap-2">
               <.icon name="hero-building-library" class="w-5 h-5 text-indigo-400" />
-              Recent Organizations
+              Organization Overview
             </h2>
-            <.link
-              navigate={~p"/super-admin/tenants/new"}
-              class="btn btn-sm btn-primary rounded-xl flex items-center gap-2"
-            >
-              <.icon name="hero-plus-circle" class="w-4 h-4" />
-              Create New Org
-            </.link>
           </div>
 
           <div class="overflow-x-auto">

@@ -6,13 +6,31 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
 
   @impl true
   def mount(_params, _session, socket) do
-    tenant = Tenants.list_tenants() |> List.first()
-    auctions = if tenant, do: Auctions.list_auctions(tenant.id), else: []
+    current_user = socket.assigns.current_user
+    tenant_id = current_user.tenant_id
+
+    # In a real app, we'd have a separate Metrics module for tenants
+    # For now, we'll fetch actual counts from Repo
+    import Ecto.Query
+
+    auctions = Auctions.list_auctions(tenant_id)
+    bidder_count =
+      BidPlatform.Accounts.User
+      |> where([u], u.tenant_id == ^tenant_id and u.role == "bidder")
+      |> BidPlatform.Repo.aggregate(:count, :id)
+
+    total_volume =
+      BidPlatform.Bidding.Bid
+      |> join(:inner, [b], a in BidPlatform.Auctions.Auction, on: b.auction_id == a.id)
+      |> where([b, a], a.tenant_id == ^tenant_id)
+      |> BidPlatform.Repo.aggregate(:sum, :amount) || 0
 
     {:ok,
      socket
-     |> assign(:tenant, tenant)
+     |> assign(:tenant_id, tenant_id)
      |> assign(:auctions, auctions)
+     |> assign(:bidder_count, bidder_count)
+     |> assign(:total_volume, total_volume)
      |> assign(:page_title, "Admin Dashboard")}
   end
 
@@ -21,22 +39,22 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
     {:noreply, apply_action(socket, socket.assigns.live_action, params)}
   end
 
-  defp apply_action(socket, :new, _params) do
-    socket
-    |> assign(:page_title, "New Auction")
-    |> assign(:auction, %BidPlatform.Auctions.Auction{})
-  end
-
   defp apply_action(socket, :index, _params) do
     socket
     |> assign(:page_title, "Admin Dashboard")
     |> assign(:auction, nil)
   end
 
+  defp apply_action(socket, :new, _params) do
+    socket
+    |> assign(:page_title, "New Auction")
+    |> assign(:auction, %BidPlatform.Auctions.Auction{})
+  end
+
   @impl true
   def handle_info({BidPlatformWeb.AdminLive.AuctionForm, {:saved, _auction}}, socket) do
-    tenant = socket.assigns.tenant
-    auctions = if tenant, do: BidPlatform.Auctions.list_auctions(tenant.id), else: []
+    tenant_id = socket.assigns.tenant_id
+    auctions = Auctions.list_auctions(tenant_id)
     {:noreply, assign(socket, auctions: auctions)}
   end
 
@@ -46,29 +64,41 @@ defmodule BidPlatformWeb.AdminLive.Dashboard do
     <div class="space-y-8">
       <div class="flex items-center justify-between">
         <h1 class="text-3xl font-black text-white text-glow">Admin Command Center</h1>
-        <.link patch={~p"/admin/new"} class="btn-premium">
-          + Create New Auction
-        </.link>
+        <div class="flex items-center gap-4">
+          <.link navigate={~p"/tenant-admin/members"} class="btn-premium bg-indigo-500/10 border-indigo-500/20 text-indigo-400 hover:bg-indigo-500/20">
+            <div class="flex items-center gap-2">
+              <.icon name="hero-users" class="w-5 h-5" />
+              Manage Members
+            </div>
+          </.link>
+          <.link patch={~p"/tenant-admin/new"} class="btn-premium">
+            <div class="flex items-center gap-2">
+              <.icon name="hero-plus-circle" class="w-5 h-5" />
+              Create New Auction
+            </div>
+          </.link>
+        </div>
       </div>
 
-      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={JS.patch(~p"/admin")}>
+      <.modal :if={@live_action in [:new]} id="auction-modal" show on_cancel={JS.patch(~p"/tenant-admin")}>
         <.live_component
           module={BidPlatformWeb.AdminLive.AuctionForm}
           id={@auction.id || :new}
           title={@page_title}
           action={@live_action}
           auction={@auction}
-          tenant_id={@tenant.id}
-          patch={~p"/admin"}
+          tenant_id={@tenant_id}
+          current_user={@current_user}
+          patch={~p"/tenant-admin"}
         />
       </.modal>
 
       <!-- Stats Grid -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <.stat_card title="Total Volume" value="$128,400" icon="hero-banknotes" />
+        <.stat_card title="Total Volume" value={"$#{@total_volume}"} icon="hero-banknotes" />
         <.stat_card title="Active Auctions" value={Enum.count(@auctions)} icon="hero-rocket-launch" />
-        <.stat_card title="Unique Bidders" value="1,042" icon="hero-users" />
-        <.stat_card title="Success Rate" value="94%" icon="hero-check-badge" />
+        <.stat_card title="Unique Bidders" value={@bidder_count} icon="hero-users" />
+        <.stat_card title="Success Rate" value="100%" icon="hero-check-badge" />
       </div>
 
       <!-- Auction Table -->

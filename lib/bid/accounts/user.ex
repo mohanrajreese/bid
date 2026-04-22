@@ -26,15 +26,16 @@ defmodule BidPlatform.Accounts.User do
     |> cast(attrs, [:email, :password, :name, :role, :is_active, :tenant_id])
     |> validate_required([:email, :name, :role, :tenant_id])
     |> validate_format(:email, ~r/^[\w.!#$%&'*+\/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+$/)
-    |> validate_inclusion(:role, ~w[admin bidder super_admin])
+    |> validate_inclusion(:role, ~w[admin bidder]) # super_admin excluded from normal updates
     |> unique_constraint([:email, :tenant_id], message: "already registered in this organization")
     |> put_password_hash()
   end
 
   def registration_changeset(user, attrs) do
+    IO.inspect(attrs, label: "REGISTRATION USER ATTRS")
     user
-    |> cast(attrs, [:email, :password, :name])
-    |> validate_required([:email, :password, :name])
+    |> cast(attrs, [:email, :password, :name, :role, :tenant_id])
+    |> validate_required([:email, :password, :name, :role, :tenant_id])
     |> validate_length(:password, min: 8)
     |> validate_format(:email, ~r/^[\w.!#$%&'*+\/=?^`{|}~-]+@[\w-]+(?:\.[\w-]+)+$/)
     |> unique_constraint([:email, :tenant_id])

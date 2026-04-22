@@ -96,7 +96,7 @@ defmodule BidPlatformWeb.UserAuth do
   def signed_in_path(user) do
     case user.role do
       "super_admin" -> ~p"/super-admin"
-      "admin" -> ~p"/admin"
+      "admin" -> ~p"/tenant-admin"
       _ -> ~p"/auctions"
     end
   end

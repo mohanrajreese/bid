@@ -43,16 +43,31 @@ defmodule BidPlatformWeb.AdminLive.AuctionForm do
   end
 
   defp save_auction(socket, :new, auction_params) do
-    case Auctions.create_auction(Map.put(auction_params, "tenant_id", socket.assigns.tenant_id)) do
-      {:ok, auction} ->
-        notify_parent({:saved, auction})
-        {:noreply,
-         socket
-         |> put_flash(:info, "Auction created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+    current_user = socket.assigns[:current_user]
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign_form(socket, changeset)}
+    if current_user do
+      final_params =
+        auction_params
+        |> Map.put("tenant_id", socket.assigns.tenant_id)
+        |> Map.put("created_by", current_user.id)
+
+      IO.inspect(final_params, label: "AUCTION CREATE PARAMS")
+
+      case Auctions.create_auction(final_params) do
+        {:ok, auction} ->
+          IO.inspect(auction.id, label: "AUCTION CREATED SUCCESS")
+          notify_parent({:saved, auction})
+          {:noreply,
+           socket
+           |> put_flash(:info, "Auction created successfully")
+           |> push_patch(to: socket.assigns.patch)}
+
+        {:error, changeset} ->
+          IO.inspect(changeset.errors, label: "AUCTION CREATE ERRORS")
+          {:noreply, assign_form(socket, changeset)}
+      end
+    else
+      {:noreply, put_flash(socket, :error, "Authentication error. Please refresh.")}
     end
   end
 
