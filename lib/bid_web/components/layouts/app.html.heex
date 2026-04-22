@@ -58,6 +58,7 @@
             <% end %>
             <%= if @current_user.role == "admin" do %>
               <li><a href={~p"/admin"}>Dashboard</a></li>
+              <li><.link navigate={~p"/admin/members"}>Members</.link></li>
             <% end %>
             <li><.link href={~p"/logout"} method="delete">Logout</.link></li>
           </ul>

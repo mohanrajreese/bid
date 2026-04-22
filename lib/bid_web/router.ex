@@ -32,6 +32,7 @@ defmodule BidPlatformWeb.Router do
     live "/admin", AdminLive.Dashboard, :index
     live "/admin/new", AdminLive.Dashboard, :new
     live "/admin/:id/edit", AdminLive.Dashboard, :edit
+    live "/admin/members", AdminLive.UserManagement, :index
 
     live "/super-admin", SuperAdminLive.Dashboard, :index
   end

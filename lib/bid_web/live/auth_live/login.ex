@@ -60,8 +60,9 @@ defmodule BidPlatformWeb.AuthLive.Login do
         </form>
 
         <div class="text-center pt-4">
-          <p class="text-white/40 text-sm">
-            Don't have an account? <.link navigate={~p"/register"} class="text-primary hover:underline">Register your Org</.link>
+          <p class="text-white/20 text-[10px] uppercase font-black tracking-widest leading-loose">
+            Secure Multi-Tenant Gateway<br/>
+            Authorized Access Only
           </p>
         </div>
       </div>
@@ -71,18 +72,23 @@ defmodule BidPlatformWeb.AuthLive.Login do
 
   @impl true
   def handle_event("login", %{"email" => email, "password" => password}, socket) do
-    # For now, we'll simulate a successful login if the email exists
-    # In a real app, we'd use Guardian or session-based auth
     case Accounts.get_user_by_email(email) do
       nil ->
         {:noreply, assign(socket, error_message: "Invalid email or password")}
-      _user ->
-        # Redirect to auctions for now
-        # Note: Proper session logic usually involves a controller for cookies
+
+      user ->
+        # Adaptive Redirection based on Role
+        redirect_path =
+          case user.role do
+            "super_admin" -> ~p"/super-admin"
+            "admin" -> ~p"/admin"
+            _ -> ~p"/auctions"
+          end
+
         {:noreply,
          socket
-         |> put_flash(:info, "Authenticated successfully")
-         |> redirect(to: ~p"/auctions")}
+         |> put_flash(:info, "Authenticated as #{String.capitalize(user.role)}")
+         |> redirect(to: redirect_path)}
     end
   end
 end
